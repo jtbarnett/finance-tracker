@@ -1,13 +1,42 @@
 import '../style/finance-tracker.css';
 import React, { useState, useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 
 const CATEGORIES = [
-  'Salary', 'Investments', 'Freelance', // Income categories
-  'Food', 'Transport', 'Utilities', 'Entertainment', 'Healthcare', 'Other' // Expense categories
+  'Salary',
+  'Investments',
+  'Freelance', // Income categories
+  'Food',
+  'Transport',
+  'Utilities',
+  'Entertainment',
+  'Healthcare',
+  'Other', // Expense categories
 ];
 
-const COLORS = ['#4ade80', '#f87171', '#60a5fa', '#818cf8', '#fb923c', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
+const COLORS = [
+  '#4ade80',
+  '#f87171',
+  '#60a5fa',
+  '#818cf8',
+  '#fb923c',
+  '#a78bfa',
+  '#f472b6',
+  '#34d399',
+  '#fbbf24',
+];
 
 const FinanceTracker = () => {
   const [entries, setEntries] = useState([]);
@@ -31,7 +60,7 @@ const FinanceTracker = () => {
       balance: parseFloat(income) - parseFloat(expense),
       category,
       description,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     setEntries([...entries, newEntry]);
@@ -42,21 +71,25 @@ const FinanceTracker = () => {
 
   const filteredEntries = useMemo(() => {
     return entries
-      .filter(entry => {
+      .filter((entry) => {
         // Search term filter
-        const searchMatch = entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          entry.category.toLowerCase().includes(searchTerm.toLowerCase());
-        
+        const searchMatch =
+          entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          entry.category.toLowerCase().includes(searchTerm.toLowerCase());
+
         // Date range filter
         const entryDate = new Date(entry.date);
-        const afterStart = !dateRange.start || entryDate >= new Date(dateRange.start);
-        const beforeEnd = !dateRange.end || entryDate <= new Date(dateRange.end);
-        
+        const afterStart =
+          !dateRange.start || entryDate >= new Date(dateRange.start);
+        const beforeEnd =
+          !dateRange.end || entryDate <= new Date(dateRange.end);
+
         // Type filter
-        const typeMatch = filterType === 'all' ||
-                         (filterType === 'income' && entry.income > 0) ||
-                         (filterType === 'expense' && entry.expense > 0);
-        
+        const typeMatch =
+          filterType === 'all' ||
+          (filterType === 'income' && entry.income > 0) ||
+          (filterType === 'expense' && entry.expense > 0);
+
         return searchMatch && afterStart && beforeEnd && typeMatch;
       })
       .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -69,15 +102,16 @@ const FinanceTracker = () => {
       netBalance: 0,
       categoryTotals: {},
       averageIncome: 0,
-      averageExpense: 0
+      averageExpense: 0,
     };
 
     if (filteredEntries.length === 0) return stats;
 
-    filteredEntries.forEach(entry => {
+    filteredEntries.forEach((entry) => {
       stats.totalIncome += entry.income;
       stats.totalExpense += entry.expense;
-      stats.categoryTotals[entry.category] = (stats.categoryTotals[entry.category] || 0) + entry.expense;
+      stats.categoryTotals[entry.category] =
+        (stats.categoryTotals[entry.category] || 0) + entry.expense;
     });
 
     stats.netBalance = stats.totalIncome - stats.totalExpense;
@@ -90,7 +124,7 @@ const FinanceTracker = () => {
   const pieChartData = useMemo(() => {
     return Object.entries(statistics.categoryTotals).map(([name, value]) => ({
       name,
-      value
+      value,
     }));
   }, [statistics.categoryTotals]);
 
@@ -102,7 +136,13 @@ const FinanceTracker = () => {
           <h2 className="card-title">Daily Finance Tracker</h2>
           <div className="card-title-balance-container">
             <div className="card-title card-title-balance">Balance:</div>
-            <div className={statistics.netBalance.toFixed(2) > 0 ? "card-title text-success" : "card-title text-danger"}>
+            <div
+              className={
+                statistics.netBalance.toFixed(2) > 0
+                  ? 'card-title text-success'
+                  : 'card-title text-danger'
+              }
+            >
               ${statistics.netBalance.toFixed(2)}
             </div>
           </div>
@@ -143,8 +183,10 @@ const FinanceTracker = () => {
                 className="form-input"
                 required
               >
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
               <input
@@ -156,7 +198,9 @@ const FinanceTracker = () => {
                 required
               />
             </div>
-            <button type="submit" className="submit-button">Add Entry</button>
+            <button type="submit" className="submit-button">
+              Add Entry
+            </button>
           </form>
         </div>
       </div>
@@ -187,14 +231,18 @@ const FinanceTracker = () => {
             <input
               type="date"
               value={dateRange.start}
-              onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+              onChange={(e) =>
+                setDateRange((prev) => ({ ...prev, start: e.target.value }))
+              }
               className="form-input"
               placeholder="Start Date"
             />
             <input
               type="date"
               value={dateRange.end}
-              onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+              onChange={(e) =>
+                setDateRange((prev) => ({ ...prev, end: e.target.value }))
+              }
               className="form-input"
               placeholder="End Date"
             />
@@ -213,23 +261,33 @@ const FinanceTracker = () => {
               <div className="stats-grid">
                 <div className="stat-item">
                   <div className="stat-label">Total Income</div>
-                  <div className="stat-value text-success">${statistics.totalIncome.toFixed(2)}</div>
+                  <div className="stat-value text-success">
+                    ${statistics.totalIncome.toFixed(2)}
+                  </div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-label">Total Expenses</div>
-                  <div className="stat-value text-danger">${statistics.totalExpense.toFixed(2)}</div>
+                  <div className="stat-value text-danger">
+                    ${statistics.totalExpense.toFixed(2)}
+                  </div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-label">Net Balance</div>
-                  <div className="stat-value">${statistics.netBalance.toFixed(2)}</div>
+                  <div className="stat-value">
+                    ${statistics.netBalance.toFixed(2)}
+                  </div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-label">Average Income</div>
-                  <div className="stat-value">${statistics.averageIncome.toFixed(2)}</div>
+                  <div className="stat-value">
+                    ${statistics.averageIncome.toFixed(2)}
+                  </div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-label">Average Expense</div>
-                  <div className="stat-value">${statistics.averageExpense.toFixed(2)}</div>
+                  <div className="stat-value">
+                    ${statistics.averageExpense.toFixed(2)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -250,9 +308,24 @@ const FinanceTracker = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="income" stroke="#4ade80" name="Income" />
-                      <Line type="monotone" dataKey="expense" stroke="#f87171" name="Expense" />
-                      <Line type="monotone" dataKey="balance" stroke="#60a5fa" name="Balance" />
+                      <Line
+                        type="monotone"
+                        dataKey="income"
+                        stroke="#4ade80"
+                        name="Income"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="expense"
+                        stroke="#f87171"
+                        name="Expense"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="balance"
+                        stroke="#60a5fa"
+                        name="Balance"
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -269,7 +342,10 @@ const FinanceTracker = () => {
                         label
                       >
                         {pieChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
                         ))}
                       </Pie>
                       <Tooltip />
